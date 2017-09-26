@@ -1,0 +1,3 @@
+[console_scripts]
+debias = lib.GOFindBias:main
+
