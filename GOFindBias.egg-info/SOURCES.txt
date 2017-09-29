@@ -1,8 +1,0 @@
-README.md
-setup.py
-GOFindBias.egg-info/PKG-INFO
-GOFindBias.egg-info/SOURCES.txt
-GOFindBias.egg-info/dependency_links.txt
-GOFindBias.egg-info/entry_points.txt
-GOFindBias.egg-info/requires.txt
-GOFindBias.egg-info/top_level.txt
