@@ -25,7 +25,7 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='1.2.2b1',
+    version='1.2.3b1',
 
     description='Analysis of the .gaf files for futher debias analysis.',
     long_description=long_description,

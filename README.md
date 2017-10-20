@@ -1,11 +1,12 @@
 # GOFindBias: Analysis tool for finding bias in the GAF files.
-GOFindBias is developed to provide the user with some insightful statistics about the [GAF](http://www.geneontology.org/page/go-annotation-file-formats) file to determine if the conclusions on the gene ontology studies can be biased because of abstract terms or the high throughput experiments([1](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1003063)). This tool selects and gives statistics about only entries having 'EXP','IDA','IPI','IMP','IGI','IEP' evidence code since they are found to be most reliable one[2](http://www.geneontology.org/book/export/html/799).
+GOFindBias is developed to provide the user with some insightful statistics about the [GAF](http://www.geneontology.org/page/go-annotation-file-formats) file to determine if the conclusions on the gene ontology studies can be biased because of abstract terms or the high throughput experiments([1](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1003063))..
 
 
 Statistics Provided by the tool are as follows:
 1. Shannon's equitability.
 2. Top 'n' PubMed and GO terms.
-3. Statistical test to compare two different [GAF](http://www.geneontology.org/page/go-annotation-file-formats) files.
+3. KS test to compare two different [GAF](http://www.geneontology.org/page/go-annotation-file-formats) files.
+4. Mutual terms between two GAF files which are among 'n' most frequent terms and their respective frequencies.
 
 
 ### Prerequisites:
@@ -22,13 +23,13 @@ Modules are available in most GNU/Linux distributions, or from their respective 
 Installing from source
 ```
 git clone https://github.com/Pranavkhade/GOFindBias
-cd GoFindBias
+cd GOFindBias
 python setup.py install
 ```
 
 Installing with pip
 ```
-pip install gofindbias
+pip install GOFindBias
 ```
 OR
 ```
@@ -37,26 +38,51 @@ pip install git+git://github.com/Pranavkhade/GOFindBias
 
 ### Files and instructions
 
-1. Collect the .gaf file you wish to analyse. For reference .gaf files you can visit ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/
-2. You can also use the .gaf files obtained as an output from the [debias](https://github.com/Rinoahu/debias) program.
+1. Collect the GAF file you wish to analyse. For reference GAF files you can visit ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/
+2. You can also use the GAF files obtained as an output from the [debias](https://github.com/Rinoahu/debias) program.
 3. Instructions and help for the parameter is as follows:
 
 ```
-positional arguments:
-  NameOfTheGAFFile  Please provide the name of the .gaf file
-  Log10[1 or 0]     Parse 1 if you want the scale to be Log to the base 10
-  TopStatistics     How many top entires you want to include?
+usage: GOFindBias.py [-h]
+                     (-i GAF_FILE [GAF_FILE ...] | -cmpr FILENAME FILENAME)
+                     [-ls 1 OR O] [-ts TOP]
+                     [-e EVIDENCE_CODE [EVIDENCE_CODE ...]]
+
+GOFindBias is an analytical tool built to analyse the .gaf files. Please
+visit: https://github.com/Pranavkhade/GOFindBias for more details.
 
 optional arguments:
-  -h, --help        show this help message and exit
+  -h, --help            show this help message and exit
+  -i GAF_FILE [GAF_FILE ...], --input GAF_FILE [GAF_FILE ...]
+                        Names of the input GAF file(s).
+  -cmpr FILENAME FILENAME, --compare FILENAME FILENAME
+                        Names of the two GAF files
+  -ls 1 OR O, --logscale 1 OR O
+                        For graphs, 0: Counts in normal scale 1: Counts in log
+                        scale [default=0]
+  -ts TOP, --topstat TOP
+                        Top n statistics sorted from highest to lowest
+                        [default=10]
+  -e EVIDENCE_CODE [EVIDENCE_CODE ...], --evidence EVIDENCE_CODE [EVIDENCE_CODE ...]
+                        Accepts Standard Evidence Codes outlined in
+                        (http://geneontology.org/page/guide-go-evidence-
+                        codes). All 3 letter code for each standard evidence
+                        is acceptable. In addition to that EXPEC is accepted
+                        which will pull out all annotations which are made
+                        experimentally. COMPEC will extract all annotations
+                        which have been done computationally. Similarly,
+                        AUTHEC and CUREC are also accepted.
 ```
 ### Examples
 
-1. `GOFindBias test/2014.gaf 1 10`
-This command will parse 2014.gaf file for the analysis and all the GO Term counts will be represented on the Natural Log scale for better comparitive visualisation of the data. The last argument is the number of top 'n' entries with highest count in the GAF file. The output of graphs will be posted in the `/graph_output` folder with names corrosponding to GO/PubMed ID count and the ontology level (F/C/P). File named `Shannon's Statistics.txt` will have the information about the diversity of a given .gaf file.
+1. `GOFindBias -i test/2014.gaf -ls 1 -ts 10`
+This command will parse 2014.gaf file for the analysis and all the GO Term counts will be represented on the Natural Log scale for better comparitive visualisation of the data. The last argument is the number of top 'n' entries with highest count in the GAF file. The output of graphs will be posted in the `/graph_output` folder with names corrosponding to GO/PubMed ID count and the ontology level (F/C/P). File named `Shannon's_Statistics.txt` will have the information about the diversity of a given .gaf file.
 
-2. `GOFindBias test/2016.gaf 0 50`
-This will give the exact same output files but for a file named 2016.gaf. All the graph visualisation will not be in the log scale and the graphs will have information about the top 50 entires. 
+2. `GOFindBias -cmpr test/2014.gaf test/2015.gaf -ts 50`
+This command will compare two files and will give KS(non-parametric) Test p-value. Along with it, it will create `COMPARE.txt` having common GO terms and PMID between top 50(n) most frequent terms from each GAF file.
+
+3. `GOFindBias -i test/2014.gaf test/2015.gaf test/2016.gaf -e EXPEC`
+This command will parse all the mentioned files and will fetch statistics for only [Experimental Evidence Codes](http://geneontology.org/page/experimental-evidence-codes).
 
 ### NOTE
 
